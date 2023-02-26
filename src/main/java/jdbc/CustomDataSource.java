@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.sql.DataSource;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Properties;
@@ -34,8 +32,9 @@ public class CustomDataSource implements DataSource {
                 if (instance == null) {
                     // Load properties from app.properties file
                     Properties props = new Properties();
-                    try (InputStream input = new FileInputStream("src/main/resources/app.properties")) {
-                        props.load(input);
+                    try {
+                        props.load(CustomDataSource.class.getClassLoader().getResourceAsStream("app.properties"));
+
                         // Get properties values
                         String driver = props.getProperty("postgres.driver");
                         String url = props.getProperty("postgres.url");
@@ -54,17 +53,13 @@ public class CustomDataSource implements DataSource {
     }
 
     @Override
-    public Connection getConnection() {
-        try {
-            return DriverManager.getConnection(url, name, password);
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to obtain database connection", e);
-        }
+    public Connection getConnection() throws SQLException {
+        return new CustomConnector().getConnection(url, name, password);
     }
 
     @Override
-    public Connection getConnection(String username, String password) {
-        throw new UnsupportedOperationException("CustomDataSource does not support getConnection(username, password)");
+    public Connection getConnection(String username, String password) throws SQLException {
+        return new CustomConnector().getConnection(url, name, password);
     }
 
     @Override
