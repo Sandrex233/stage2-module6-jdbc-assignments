@@ -16,7 +16,4 @@ public class User {
     private String firstName;
     private String lastName;
     private int age;
-
-    public User(String john, String doe, int i) {
-    }
 }
