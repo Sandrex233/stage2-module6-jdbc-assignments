@@ -28,7 +28,7 @@ public class CustomDataSource implements DataSource {
         this.name = name;
     }
 
-    public static CustomDataSource getInstance() throws IOException {
+    public static CustomDataSource getInstance() {
         if (instance == null) {
             synchronized (CustomDataSource.class) {
                 if (instance == null) {
