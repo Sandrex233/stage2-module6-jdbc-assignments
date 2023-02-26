@@ -28,20 +28,24 @@ public class CustomDataSource implements DataSource {
 
     public static CustomDataSource getInstance() {
         if (instance == null) {
-            // Load properties from app.properties file
-            Properties props = new Properties();
-            try {
-                props.load(CustomDataSource.class.getClassLoader().getResourceAsStream("app.properties"));
+            synchronized (CustomDataSource.class) {
+                if (instance == null) {
+                    // Load properties from app.properties file
+                    Properties props = new Properties();
+                    try {
+                        props.load(CustomDataSource.class.getClassLoader().getResourceAsStream("app.properties"));
 
-                // Get properties values
-                String driver = props.getProperty("postgres.driver");
-                String url = props.getProperty("postgres.url");
-                String name = props.getProperty("postgres.name");
-                String password = props.getProperty("postgres.password");
+                        // Get properties values
+                        String driver = props.getProperty("postgres.driver");
+                        String url = props.getProperty("postgres.url");
+                        String name = props.getProperty("postgres.name");
+                        String password = props.getProperty("postgres.password");
 
-                instance = new CustomDataSource(driver, url, password, name);
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to load properties from app.properties file", e);
+                        instance = new CustomDataSource(driver, url, password, name);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Unable to load properties from app.properties file", e);
+                    }
+                }
             }
         }
 
