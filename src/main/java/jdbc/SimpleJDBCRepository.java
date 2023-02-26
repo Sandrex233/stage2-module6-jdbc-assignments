@@ -36,7 +36,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public Long createUser(User user) throws SQLException{
+    public Long createUser(User user) throws SQLException {
         if (user.getFirstName() == null) {
             throw new IllegalArgumentException("Firstname cannot be null");
         }
@@ -68,6 +68,8 @@ public class SimpleJDBCRepository {
             } else {
                 return null;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -80,6 +82,8 @@ public class SimpleJDBCRepository {
             } else {
                 return null;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -91,6 +95,8 @@ public class SimpleJDBCRepository {
                 users.add(new User(rs.getLong("id"), rs.getString("firstName"), rs.getString("lastName"), rs.getInt("age")));
             }
             return users;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -106,6 +112,8 @@ public class SimpleJDBCRepository {
             } else {
                 return null;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

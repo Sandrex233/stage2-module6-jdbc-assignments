@@ -1,16 +1,15 @@
 package jdbc;
 
-import javax.sql.DataSource;
-
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.sql.DataSource;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Properties;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
 
 @Getter
@@ -37,15 +36,16 @@ public class CustomDataSource implements DataSource {
                     Properties props = new Properties();
                     try (InputStream input = new FileInputStream("app.properties")) {
                         props.load(input);
+                        // Get properties values
+                        String driver = props.getProperty("postgres.driver");
+                        String url = props.getProperty("postgres.url");
+                        String name = props.getProperty("postgres.name");
+                        String password = props.getProperty("postgres.password");
+
+                        instance = new CustomDataSource(driver, url, password, name);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Unable to load properties from app.properties file", e);
                     }
-
-                    // Get properties values
-                    String driver = props.getProperty("postgres.driver");
-                    String url = props.getProperty("postgres.url");
-                    String name = props.getProperty("postgres.name");
-                    String password = props.getProperty("postgres.password");
-
-                    instance = new CustomDataSource(driver, url, password, name);
                 }
             }
         }
@@ -54,11 +54,16 @@ public class CustomDataSource implements DataSource {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, name, password);
+    public Connection getConnection() {
+        try {
+            return DriverManager.getConnection(url, name, password);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to obtain database connection", e);
+        }
     }
+
     @Override
-    public Connection getConnection(String username, String password)  {
+    public Connection getConnection(String username, String password) {
         throw new UnsupportedOperationException("CustomDataSource does not support getConnection(username, password)");
     }
 
@@ -73,13 +78,13 @@ public class CustomDataSource implements DataSource {
     }
 
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-
+    public int getLoginTimeout() throws SQLException {
+        return 0;
     }
 
     @Override
-    public int getLoginTimeout() throws SQLException {
-        return 0;
+    public void setLoginTimeout(int seconds) throws SQLException {
+
     }
 
     @Override
