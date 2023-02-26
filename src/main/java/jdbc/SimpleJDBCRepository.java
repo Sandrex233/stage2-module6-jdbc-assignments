@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,32 +21,25 @@ public class SimpleJDBCRepository {
     private static final String findUserByIdSQL = "SELECT * FROM myusers WHERE id = ?";
     private static final String findUserByNameSQL = "SELECT * FROM myusers WHERE firstname = ?";
     private static final String findAllUserSQL = "SELECT * FROM myusers";
-    private DataSource dataSource;
+
     private Connection connection = null;
     private PreparedStatement ps = null;
     private Statement st = null;
-
-    {
-        dataSource = CustomDataSource.getInstance();
-    }
 
     public Long createUser(User user) {
         if (user.getFirstName() == null) {
             throw new IllegalArgumentException("Firstname cannot be null");
         }
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(createUserSQL, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            connection = CustomDataSource.getInstance().getConnection();
+            ps = connection.prepareStatement(createUserSQL);
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
-            ps.executeUpdate();
+            ps.execute();
 
-            ResultSet rs;
-            rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getLong(1);
-            } else {
-                throw new SQLException("Unable to create user, no ID obtained.");
-            }
+            User userByName = findUserByName(user.getFirstName());
+            return userByName.getId();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +47,10 @@ public class SimpleJDBCRepository {
     }
 
     public User findUserById(Long userId) {
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findUserByIdSQL)) {
+        try {
+            connection = CustomDataSource.getInstance().getConnection();
+            ps = connection.prepareStatement(findUserByIdSQL);
+
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -69,7 +64,9 @@ public class SimpleJDBCRepository {
     }
 
     public User findUserByName(String userName) {
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findUserByNameSQL)) {
+        try {
+            connection = CustomDataSource.getInstance().getConnection();
+            ps = connection.prepareStatement(findUserByNameSQL);
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -84,7 +81,10 @@ public class SimpleJDBCRepository {
 
     public List<User> findAllUser() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findAllUserSQL)) {
+        try {
+            connection = CustomDataSource.getInstance().getConnection();
+            ps = connection.prepareStatement(findAllUserSQL);
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 users.add(new User(rs.getLong("id"), rs.getString("firstName"), rs.getString("lastName"), rs.getInt("age")));
@@ -96,7 +96,10 @@ public class SimpleJDBCRepository {
     }
 
     public User updateUser(User user) {
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(updateUserSQL)) {
+        try {
+            connection = CustomDataSource.getInstance().getConnection();
+            ps = connection.prepareStatement(updateUserSQL);
+
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
@@ -113,7 +116,10 @@ public class SimpleJDBCRepository {
     }
 
     public void deleteUser(Long userId) {
-        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(deleteUser)) {
+        try {
+            connection = CustomDataSource.getInstance().getConnection();
+            ps = connection.prepareStatement(deleteUser);
+
             ps.setLong(1, userId);
             ps.executeUpdate();
         } catch (SQLException e) {
