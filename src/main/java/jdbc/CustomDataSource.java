@@ -34,7 +34,7 @@ public class CustomDataSource implements DataSource {
                 if (instance == null) {
                     // Load properties from app.properties file
                     Properties props = new Properties();
-                    try (InputStream input = new FileInputStream("app.properties")) {
+                    try (InputStream input = new FileInputStream("src/main/resources/app.properties")) {
                         props.load(input);
                         // Get properties values
                         String driver = props.getProperty("postgres.driver");
