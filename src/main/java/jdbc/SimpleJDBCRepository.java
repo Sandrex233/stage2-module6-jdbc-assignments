@@ -36,7 +36,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public Long createUser(User user) {
+    public Long createUser(User user) throws SQLException{
         if (user.getFirstName() == null) {
             throw new IllegalArgumentException("Firstname cannot be null");
         }
@@ -109,7 +109,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId) throws SQLException {
         try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(deleteUser)) {
             ps.setLong(1, userId);
             ps.executeUpdate();
