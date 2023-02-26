@@ -23,7 +23,7 @@ public class SimpleJDBCRepository {
     private static final String findUserByIdSQL = "SELECT * FROM myusers WHERE id = ?";
     private static final String findUserByNameSQL = "SELECT * FROM myusers WHERE firstname = ?";
     private static final String findAllUserSQL = "SELECT * FROM myusers";
-    private final DataSource dataSource;
+    private DataSource dataSource;
     private Connection connection = null;
     private PreparedStatement ps = null;
     private Statement st = null;
@@ -37,8 +37,7 @@ public class SimpleJDBCRepository {
     }
 
     public Long createUser(User user) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(createUserSQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(createUserSQL, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
@@ -58,8 +57,7 @@ public class SimpleJDBCRepository {
     }
 
     public User findUserById(Long userId) throws SQLException {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(findUserByIdSQL)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findUserByIdSQL)) {
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -71,8 +69,7 @@ public class SimpleJDBCRepository {
     }
 
     public User findUserByName(String userName) throws SQLException {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(findUserByNameSQL)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findUserByNameSQL)) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -85,19 +82,17 @@ public class SimpleJDBCRepository {
 
     public List<User> findAllUser() throws SQLException {
         List<User> users = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(findAllUserSQL)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findAllUserSQL)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                users.add( new User(rs.getLong("id"), rs.getString("firstName"), rs.getString("lastName"), rs.getInt("age")));
+                users.add(new User(rs.getLong("id"), rs.getString("firstName"), rs.getString("lastName"), rs.getInt("age")));
             }
             return users;
         }
     }
 
     public User updateUser(User user) throws SQLException {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(updateUserSQL)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(updateUserSQL)) {
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
@@ -112,8 +107,7 @@ public class SimpleJDBCRepository {
     }
 
     private void deleteUser(Long userId) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(deleteUser)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(deleteUser)) {
             ps.setLong(1, userId);
             ps.executeUpdate();
         } catch (SQLException e) {
