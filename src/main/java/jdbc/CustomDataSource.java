@@ -7,10 +7,7 @@ import lombok.Setter;
 
 import java.io.FileInputStream;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
+import java.sql.*;
 import java.util.Properties;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,37 +63,47 @@ public class CustomDataSource implements DataSource {
     }
 
     @Override
-    public PrintWriter getLogWriter()  {
-        throw new UnsupportedOperationException("CustomDataSource does not support getLogWriter()");
+    public PrintWriter getLogWriter() throws SQLException {
+        return null;
     }
 
     @Override
-    public void setLogWriter(PrintWriter out) {
-        throw new UnsupportedOperationException("CustomDataSource does not support setLogWriter(PrintWriter)");
+    public void setLogWriter(PrintWriter out) throws SQLException {
+
     }
 
     @Override
-    public void setLoginTimeout(int seconds) {
-        throw new UnsupportedOperationException("CustomDataSource does not support setLoginTimeout(int)");
+    public void setLoginTimeout(int seconds) throws SQLException {
+
     }
 
     @Override
-    public int getLoginTimeout() {
-        throw new UnsupportedOperationException("CustomDataSource does not support getLoginTimeout()");
+    public int getLoginTimeout() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public ConnectionBuilder createConnectionBuilder() throws SQLException {
+        return DataSource.super.createConnectionBuilder();
     }
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException("CustomDataSource does not support getParentLogger()");
+        return null;
+    }
+
+    @Override
+    public ShardingKeyBuilder createShardingKeyBuilder() throws SQLException {
+        return DataSource.super.createShardingKeyBuilder();
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new SQLException("CustomDataSource cannot be unwrapped to " + iface.getName());
+        return null;
     }
 
     @Override
-    public boolean isWrapperFor(Class<?> iface)  {
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return false;
     }
 }
