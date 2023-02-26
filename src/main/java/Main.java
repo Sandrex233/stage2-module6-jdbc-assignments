@@ -21,6 +21,7 @@ public class Main {
         repository.updateUser(foundUser);
         System.out.println("User updated: " + foundUser);
 
+
         // Find a user by name
         List<User> usersWithName = (List<User>) repository.findUserByName("sandro");
         System.out.println("Users with name 'John Doe': " + usersWithName);
