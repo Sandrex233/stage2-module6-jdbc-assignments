@@ -36,7 +36,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public Long createUser(User user) throws SQLException {
+    public Long createUser(User user) {
         if (user.getFirstName() == null) {
             throw new IllegalArgumentException("Firstname cannot be null");
         }
@@ -59,7 +59,7 @@ public class SimpleJDBCRepository {
 
     }
 
-    public User findUserById(Long userId) throws SQLException {
+    public User findUserById(Long userId) {
         try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findUserByIdSQL)) {
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -73,7 +73,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public User findUserByName(String userName) throws SQLException {
+    public User findUserByName(String userName) {
         try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findUserByNameSQL)) {
             ps.setString(1, userName);
             ResultSet rs = ps.executeQuery();
@@ -87,7 +87,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public List<User> findAllUser() throws SQLException {
+    public List<User> findAllUser() {
         List<User> users = new ArrayList<>();
         try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(findAllUserSQL)) {
             ResultSet rs = ps.executeQuery();
@@ -100,7 +100,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public User updateUser(User user) throws SQLException {
+    public User updateUser(User user) {
         try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(updateUserSQL)) {
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
@@ -117,7 +117,7 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public void deleteUser(Long userId) throws SQLException {
+    public void deleteUser(Long userId) {
         try (Connection connection = dataSource.getConnection(); PreparedStatement ps = connection.prepareStatement(deleteUser)) {
             ps.setLong(1, userId);
             ps.executeUpdate();
