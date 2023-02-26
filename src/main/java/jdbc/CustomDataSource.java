@@ -50,12 +50,12 @@ public class CustomDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return new CustomConnector().getConnection(url, name, password);
+        return new CustomConnector().getConnection(instance.getUrl(), instance.getName(), instance.getPassword());
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return new CustomConnector().getConnection(url, name, password);
+        return new CustomConnector().getConnection(instance.getUrl(), instance.getName(), instance.getPassword());
     }
 
     @Override
