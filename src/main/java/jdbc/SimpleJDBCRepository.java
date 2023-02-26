@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +28,7 @@ public class SimpleJDBCRepository {
     private Statement st = null;
 
     {
-        try {
-            dataSource = CustomDataSource.getInstance();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        dataSource = CustomDataSource.getInstance();
     }
 
     public Long createUser(User user) {
